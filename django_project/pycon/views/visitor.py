@@ -1,16 +1,32 @@
 # -*- coding: utf-8 -*-
 import json
+
+from django.forms.widgets import DateTimeInput
 from django.views.generic import (
     TemplateView
 )
 
 from pycon.models.visit import Visit
 from pycon.serializers.visit_serializer import VisitSerializer
+from django.views.generic.edit import CreateView
+from django import forms
 
 
 __author__ = 'Dimas Ciputra <dimas@kartoza.com>'
 __date__ = '16/02/17'
 
+
+class DateInput(forms.DateTimeInput):
+    input_type = 'date'
+
+
+class VisitorCreate(CreateView):
+    model = Visit
+    fields = '__all__'
+    widgets = {
+        'date_left': DateInput()
+    }
+    template_name = 'visitor/visit_form.html'
 
 class VisitorMapView(TemplateView):
     """Map view for Visitor."""

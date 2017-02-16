@@ -3,4 +3,4 @@ __date__ = '18/11/16'
 
 from .conference import *
 from .visit import *
-from .conference_visit_entry import ConferenceVisitEntry
+# from .conference_visit_entry import ConferenceVisitEntry
