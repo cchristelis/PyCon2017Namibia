@@ -13,7 +13,7 @@
 {% endblock %}
 
 {% block content %}
-    <div id="map" class="map"></div>
+    <div id="map" class="map"><div id="popup"></div></div>
 {% endblock %}
 
 {% block inline-js %}
@@ -21,7 +21,7 @@
         var visitors = {{ visitors|safe }};
 
         var map = new ol.Map({
-            target: 'map',
+            target: document.getElementById('map'),
             layers: [
                 new ol.layer.Tile({
                     source: new ol.source.OSM()
@@ -40,7 +40,6 @@
             })
         });
 
-        var flightsSource;
         var vectorSource;
 
         var destination = {
@@ -54,9 +53,6 @@
                 vectorSource.addFeature(feature);
             }, timeout);
         };
-
-        // Create markers
-        var markers = [];
 
         /*
         * create vector source
@@ -75,7 +71,8 @@
                     var iconFeature = new ol.Feature({
                         geometry: new ol.geom.Point(ol.proj.transform([longitude, latitude], 'EPSG:4326',
                         'EPSG:3857')),
-                        finished: false
+                        finished: false,
+                        name: name
                     });
 
                     var arcGenerator = new arc.GreatCircle(
@@ -121,7 +118,6 @@
             style: function(feature) {
                 // if the animation is still active for a feature, do not
                 // render the feature with the layer style
-                console.log(feature);
                 if (feature.get('finished')) {
                     return arcStyle;
                 } else {
@@ -143,7 +139,6 @@
                     var coords = feature.getGeometry().getCoordinates();
                     var elapsedTime = frameState.time - feature.get('start');
                     var elapsedPoints = elapsedTime * pointsPerMs;
-                    console.log(elapsedPoints);
 
                     if (elapsedPoints >= coords.length) {
                         feature.set('finished', true);
@@ -159,6 +154,51 @@
             // tell OpenLayers to continue the animation
             map.render();
         };
+
+        var element = document.getElementById('popup');
+
+        // Popup
+        var popup = new ol.Overlay({
+            element: element,
+            positioning: 'bottom-center',
+            stopEvent: false,
+            offset: [0, -20]
+        });
+        map.addOverlay(popup);
+
+        // display popup on click
+        map.on('click', function(evt) {
+            var feature = map.forEachFeatureAtPixel(evt.pixel,
+                function(feature) {
+                    return feature;
+                });
+            if (feature && feature.get('name')) {
+                var coordinates = feature.getGeometry().getCoordinates();
+                popup.setPosition(coordinates);
+                $(element).popover({
+                    'placement': 'top',
+                    'html': true,
+                    'content': feature.get('name')
+                 });
+                $(element).popover('show');
+            } else {
+                $(element).popover('destroy');
+            }
+        });
+
+        // change mouse cursor when over marker
+        map.on('pointermove', function(e) {
+            if (e.dragging) {
+                $(element).popover('destroy');
+                return;
+            }
+            var pixel = map.getEventPixel(e.originalEvent);
+            var hit = this.forEachFeatureAtPixel(pixel, function(feature, layer) {
+                if(feature.get('name'))
+                    return true;
+            });
+            map.getTarget().style.cursor = hit ? 'pointer' : '';
+        });
 
     </script>
 {% endblock %}
