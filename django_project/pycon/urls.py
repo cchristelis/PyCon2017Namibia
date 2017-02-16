@@ -8,11 +8,14 @@ admin.autodiscover()
 from django.conf.urls import url
 from pycon.api_views.visitors import VisitorsApi
 
-urlpatterns =[
-    url(regex='',
+urlapi = [
+    url(
+        r'api/conference/(?P<conference_id>\d+)/visitors$',
+        VisitorsApi.as_view())
+]
+
+urlpatterns = urlapi + [
+    url(r'',
         view=VisitorMapView.as_view(),
         name='visitor-map'),
-    url(
-        r'^api/visitors/(?P<conference_id>\d+)$',
-        VisitorsApi.as_view()),
 ]
