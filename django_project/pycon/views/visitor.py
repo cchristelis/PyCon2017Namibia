@@ -1,5 +1,7 @@
 # -*- coding: utf-8 -*-
 import json
+
+from django.forms.widgets import DateTimeInput
 from django.views.generic import (
     TemplateView
 )
@@ -14,7 +16,7 @@ __author__ = 'Dimas Ciputra <dimas@kartoza.com>'
 __date__ = '16/02/17'
 
 
-class DateTimeInput(forms.DateTimeInput):
+class DateInput(forms.DateTimeInput):
     input_type = 'date'
 
 
@@ -22,7 +24,7 @@ class VisitorCreate(CreateView):
     model = Visit
     fields = '__all__'
     widgets = {
-        'date_left': DateTimeInput()
+        'date_left': DateInput()
     }
     template_name = 'visitor/visit_form.html'
 
