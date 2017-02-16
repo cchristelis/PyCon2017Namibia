@@ -8,6 +8,10 @@
     <link rel="stylesheet" href="{% static 'css/visitor.css' %}" type="text/css">
 {% endblock %}
 
+{% block js %}
+    <script src="https://api.mapbox.com/mapbox.js/plugins/arc.js/v0.1.0/arc.js"></script>
+{% endblock %}
+
 {% block content %}
     <div id="map" class="map"></div>
 {% endblock %}
@@ -29,64 +33,132 @@
             })
         });
 
-        var flightSource;
+        var arcStyle = new ol.style.Style({
+            stroke: new ol.style.Stroke({
+                color: '#829AF9',
+                width: 3
+            })
+        });
+
+        var flightsSource;
+        var vectorSource;
+
+        var destination = {
+            'longitude': -22.6047922,
+            'latitude': 17.0607673
+        };
 
         var addLater = function (feature, timeout) {
             window.setTimeout(function () {
                 feature.set('start', new Date().getTime());
-                flightSource.addFeature(feature);
+                vectorSource.addFeature(feature);
             }, timeout);
-        };
-
-        var pointsPerMs = 0.1;
-        var animateFlights = function (event) {
         };
 
         // Create markers
         var markers = [];
-
-        for(var i=0; i < visitors.length; i++) {
-            var visitor = visitors[i];
-            var longitude = visitor.home.coordinates[0];
-            var latitude = visitor.home.coordinates[1];
-            var iconPath = visitor.gravatar_url;
-            var name = visitor.name;
-
-            var iconFeature = new ol.Feature({
-                geometry: new ol.geom.Point(ol.proj.transform([longitude, latitude], 'EPSG:4326',
-                'EPSG:3857'))
-            });
-
-            //create style for your feature...
-            var iconStyle = new ol.style.Style({
-                image: new ol.style.Icon(/** @type {olx.style.IconOptions} */ ({
-                anchor: [0.5, 46],
-                scale : 0.5,
-                anchorXUnits: 'fraction',
-                anchorYUnits: 'pixels',
-                opacity: 0.75,
-                src: iconPath
-                }))
-            });
-
-            iconFeature.setStyle(iconStyle);
-            markers.push(iconFeature);
-        }
 
         /*
         * create vector source
         * you could set the style for all features in your vectoreSource as well
         */
         var vectorSource = new ol.source.Vector({
-            features: markers      //add an array of features
-            //,style: iconStyle     //to set the style for all your features...
+            wrapX: false,
+            loader: function () {
+                for(var i=0; i < visitors.length; i++) {
+                    var visitor = visitors[i];
+                    var longitude = visitor.home.coordinates[0];
+                    var latitude = visitor.home.coordinates[1];
+                    var iconPath = visitor.gravatar_url;
+                    var name = visitor.name;
+
+                    var iconFeature = new ol.Feature({
+                        geometry: new ol.geom.Point(ol.proj.transform([longitude, latitude], 'EPSG:4326',
+                        'EPSG:3857')),
+                        finished: false
+                    });
+
+                    var arcGenerator = new arc.GreatCircle(
+                        {x: longitude, y: latitude},
+                        {x: destination['latitude'], y: destination['longitude']}
+                    );
+                    var arcLine = arcGenerator.Arc(100, {offset: 10});
+
+                    //create style for your feature...
+                    var iconStyle = new ol.style.Style({
+                        image: new ol.style.Icon(/** @type {olx.style.IconOptions} */ ({
+                        anchor: [0.5, 46],
+                        scale : 0.5,
+                        anchorXUnits: 'fraction',
+                        anchorYUnits: 'pixels',
+                        opacity: 0.80,
+                        src: iconPath
+                        }))
+                    });
+
+                    if (arcLine.geometries.length === 1) {
+                        var line = new ol.geom.LineString(arcLine.geometries[0].coords);
+                        line.transform(ol.proj.get('EPSG:4326'), ol.proj.get('EPSG:3857'));
+
+                        var feature = new ol.Feature({
+                            geometry: line,
+                            finished: false
+                        });
+                        // add the feature with a delay so that the animation
+                        // for all features does not start at the same time
+                        addLater(feature, i * 150);
+                      }
+
+                    iconFeature.setStyle(iconStyle);
+                    addLater(iconFeature, i * 150);
+                    map.on('postcompose', animateFlights);
+                }
+            }
         });
 
         var vectorLayer = new ol.layer.Vector({
-            source: vectorSource
+            source: vectorSource,
+            style: function(feature) {
+                // if the animation is still active for a feature, do not
+                // render the feature with the layer style
+                console.log(feature);
+                if (feature.get('finished')) {
+                    return arcStyle;
+                } else {
+                    return null;
+                }
+            }
         });
         map.addLayer(vectorLayer);
 
+        var pointsPerMs = 0.1;
+        var animateFlights = function (event) {
+            var vectorContext = event.vectorContext;
+            var frameState = event.frameState;
+            vectorContext.setStyle(arcStyle);
+            var features = vectorSource.getFeatures();
+            for(var i=0; i< features.length; i++) {
+                var feature = features[i];
+                if(!feature.get('finished')) {
+                    var coords = feature.getGeometry().getCoordinates();
+                    var elapsedTime = frameState.time - feature.get('start');
+                    var elapsedPoints = elapsedTime * pointsPerMs;
+                    console.log(elapsedPoints);
+
+                    if (elapsedPoints >= coords.length) {
+                        feature.set('finished', true);
+                    }
+
+                    var maxIndex = Math.min(elapsedPoints, coords.length);
+                    var currentLine = new ol.geom.LineString(coords.slice(0, maxIndex));
+
+                    // directly draw the line with the vector context
+                    vectorContext.drawGeometry(currentLine);
+                }
+            }
+            // tell OpenLayers to continue the animation
+            map.render();
+        };
 
     </script>
 {% endblock %}
