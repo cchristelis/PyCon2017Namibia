@@ -7,6 +7,7 @@ from pycon.views.visitor import VisitorMapView
 admin.autodiscover()
 from django.conf.urls import url
 from pycon.api_views.visitors import VisitorsApi
+from pycon.views.visitor import VisitorCreate
 
 urlapi = [
     url(
@@ -15,7 +16,8 @@ urlapi = [
 ]
 
 urlpatterns = urlapi + [
-    url(r'',
+    url(r'map',
         view=VisitorMapView.as_view(),
         name='visitor-map'),
+    url(r'visitor/add',VisitorCreate.as_view(), name="visitor-add"),
 ]
