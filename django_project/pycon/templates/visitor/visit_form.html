@@ -1,22 +1,33 @@
 {% extends "project_base.html" %}
 {% load staticfiles %}
 {% block title %}
-    Map Page
+    Add Visitor
 {% endblock title %}
+{% load crispy_forms_tags %}
 
-
+{% block css %}
+    <link rel="stylesheet" href="{% static 'css/visitor.css' %}" type="text/css">
+{% endblock %}
 
 {% block content %}
     <head>
         {{ form.media }}
     </head>
     <div class="container">
-        <form action="" method="post">
-            {% csrf_token %}
-            {{ form.as_p }}
-            <input type="submit" value="Submit" />
-
-        </form>
+        <div class="form-container">
+            <form action="" method="post">
+                {% csrf_token %}
+                <div class="form-group">
+                    {% crispy form %}
+                </div>
+            </form>
+        </div>
     </div>
 
+{% endblock %}
+
+{% block inline-js %}
+    <script type="text/javascript">
+        document.getElementById('id_date_left').type = 'date';
+    </script>
 {% endblock %}
