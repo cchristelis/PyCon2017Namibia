@@ -3,6 +3,11 @@
 from django.contrib import admin
 
 admin.autodiscover()
+from django.conf.urls import url
+from pycon.api_views.visitors import VisitorsApi
 
-urlpatterns =[
+urlpatterns = [
+    url(
+        r'^api/visitors/(?P<conference_id>\d+)$',
+        VisitorsApi.as_view()),
 ]
