@@ -10,7 +10,7 @@ class Visit(models.Model):
     home = models.PointField(null=True, blank=True)
     date_left = models.DateTimeField()
     gravatar = models.EmailField(null=True,blank=True)
-    conference = models.ForeignKey(Conference, on_delete=models.CASCADE)
+    conference = models.ForeignKey(Conference)
     
     def __unicode__(self):
         return '%s' % (self.name)
