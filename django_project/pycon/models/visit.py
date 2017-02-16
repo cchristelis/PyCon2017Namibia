@@ -1,6 +1,8 @@
 from __future__ import unicode_literals
 
 from django.contrib.gis.db import models
+from pycon.models.conference import  Conference
+
 
 
 class Visit(models.Model):
@@ -8,6 +10,7 @@ class Visit(models.Model):
     home = models.PointField(null=True, blank=True)
     date_left = models.DateTimeField()
     gravatar = models.EmailField(null=True,blank=True)
+    conference = models.ForeignKey(Conference, on_delete=models.CASCADE)
     
     def __unicode__(self):
         return '%s' % (self.name)
