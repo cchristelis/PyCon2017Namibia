@@ -9,7 +9,7 @@ admin.autodiscover()
 
 urlpatterns=[
     url(r'^admin/', include(admin.site.urls)),
-    url(r'^pycon/', include('pycon.urls', namespace='pycon')),
+    url(r'^', include('pycon.urls', namespace='pycon')),
 ]
 
 if settings.DEBUG:

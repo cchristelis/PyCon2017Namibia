@@ -1,0 +1,9 @@
+#container {
+    margin-top:60px;
+    width: 100% !important;
+}
+
+.map {
+    height: 100%;
+    width: 100%;
+}

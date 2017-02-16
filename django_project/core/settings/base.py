@@ -92,6 +92,7 @@ TEMPLATES = [
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
         'DIRS': [
             absolute_path('core', 'base_templates'),
+            absolute_path('pycon', 'templates'),
         ],
         'APP_DIRS': True,
         'OPTIONS': {
