@@ -1,0 +1,92 @@
+{% extends "project_base.html" %}
+{% load staticfiles %}
+{% block title %}
+    Map Page
+{% endblock title %}
+
+{% block css %}
+    <link rel="stylesheet" href="{% static 'css/visitor.css' %}" type="text/css">
+{% endblock %}
+
+{% block content %}
+    <div id="map" class="map"></div>
+{% endblock %}
+
+{% block inline-js %}
+    <script type="text/javascript">
+        var visitors = {{ visitors|safe }};
+
+        var map = new ol.Map({
+            target: 'map',
+            layers: [
+                new ol.layer.Tile({
+                    source: new ol.source.OSM()
+                })
+            ],
+            view: new ol.View({
+                center: ol.proj.fromLonLat([18.490410, -22.957640]),
+                zoom: 6.5
+            })
+        });
+
+        var flightSource;
+
+        var addLater = function (feature, timeout) {
+            window.setTimeout(function () {
+                feature.set('start', new Date().getTime());
+                flightSource.addFeature(feature);
+            }, timeout);
+        };
+
+        var pointsPerMs = 0.1;
+        var animateFlights = function (event) {
+        };
+
+        // Create markers
+        var markers = [];
+
+        for(var i=0; i < visitors.length; i++) {
+            var visitor = visitors[i];
+            var longitude = visitor.home.coordinates[0];
+            var latitude = visitor.home.coordinates[1];
+            var iconPath = visitor.gravatar_url;
+            var name = visitor.name;
+
+            var iconFeature = new ol.Feature({
+                geometry: new ol.geom.Point(ol.proj.transform([longitude, latitude], 'EPSG:4326',
+                'EPSG:3857'))
+            });
+
+            //create style for your feature...
+            var iconStyle = new ol.style.Style({
+                image: new ol.style.Icon(/** @type {olx.style.IconOptions} */ ({
+                anchor: [0.5, 46],
+                scale : 0.5,
+                anchorXUnits: 'fraction',
+                anchorYUnits: 'pixels',
+                opacity: 0.75,
+                src: iconPath
+                }))
+            });
+
+            iconFeature.setStyle(iconStyle);
+            markers.push(iconFeature);
+        }
+
+        /*
+        * create vector source
+        * you could set the style for all features in your vectoreSource as well
+        */
+        var vectorSource = new ol.source.Vector({
+            features: markers      //add an array of features
+            //,style: iconStyle     //to set the style for all your features...
+        });
+
+        var vectorLayer = new ol.layer.Vector({
+            source: vectorSource
+        });
+        map.addLayer(vectorLayer);
+
+
+    </script>
+{% endblock %}
