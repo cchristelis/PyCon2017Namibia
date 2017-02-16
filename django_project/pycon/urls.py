@@ -16,8 +16,8 @@ urlapi = [
 ]
 
 urlpatterns = urlapi + [
-    url(r'map',
+    url(r'',
         view=VisitorMapView.as_view(),
         name='visitor-map'),
-    url(r'visitor/add',VisitorCreate.as_view(success_url="/visitor/add"), name="visitor-add"),
+    url(r'visitor/add', VisitorCreate.as_view(success_url="/visitor/add"), name="visitor-add"),
 ]

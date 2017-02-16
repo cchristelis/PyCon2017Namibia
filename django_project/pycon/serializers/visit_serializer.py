@@ -19,7 +19,9 @@ class VisitSerializer(serializers.ModelSerializer):
         fields = '__all__'
 
     def get_gravatar_url(self, obj):
-        email = obj.gravatar
+        email = 'default@default.com'
+        if obj.gravatar:
+            email = obj.gravatar
         size = 40
 
         # construct the url
