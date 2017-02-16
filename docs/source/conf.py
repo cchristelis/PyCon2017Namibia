@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #
-# animalipedia documentation build configuration file, created by
+# pycon documentation build configuration file, created by
 # sphinx-quickstart on Thu Jun  6 10:07:13 2013.
 #
 # This file is execfile()d with the current directory set to its containing dir.
@@ -40,7 +40,7 @@ source_suffix = '.rst'
 master_doc = 'index'
 
 # General information about the project.
-project = u'Animalipedia'
+project = u'pycon'
 # copyright = u'2013, Tim Sutton'
 
 # The version info for the project you're documenting, acts as replacement for

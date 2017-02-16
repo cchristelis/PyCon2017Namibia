@@ -1,4 +1,4 @@
-PROJECT_ID := animalipedia
+PROJECT_ID := pycon
 
 SHELL := /bin/bash
 

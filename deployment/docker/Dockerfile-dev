@@ -1,6 +1,6 @@
 #--------- Generic stuff all our Dockerfiles should start with so we get caching ------------
 # Note this base image is based on debian
-FROM animalipedia_uwsgi
+FROM pycon_uwsgi
 MAINTAINER Muhammad Anis<anisiconic@gmail.com>
 
 # Use local cached debs from host (saves your bandwidth!)

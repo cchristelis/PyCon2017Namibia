@@ -10,7 +10,7 @@
 # You would use a standalone nginx instance running on the host!
 nginx:
   # Note you cannot scale if you use conteiner_name
-  container_name: animalipedia-nginx
+  container_name: pycon-nginx
   image: nginx
   hostname: nginx
   volumes:
@@ -21,7 +21,7 @@ nginx:
 
 smtp:
   # Note you cannot scale if you use conteiner_name
-  container_name: animalipedia-smtp
+  container_name: pycon-smtp
   image: catatnight/postfix
   hostname: postfix
   environment:
@@ -32,7 +32,7 @@ smtp:
 
 db:
   # Note you cannot scale if you use conteiner_name
-  container_name: animalipedia-db
+  container_name: pycon-db
   image: kartoza/postgis:9.4-2.1
   volumes:
     #- ./pg/postgres_data:/var/lib/postgresql
@@ -45,7 +45,7 @@ db:
 
 uwsgi:
   # Note you cannot scale if you use conteiner_name
-  container_name: animalipedia-uwsgi
+  container_name: pycon-uwsgi
   build: docker
   hostname: uwsgi
   environment:
@@ -54,7 +54,7 @@ uwsgi:
     - DATABASE_PASSWORD=docker
     - DATABASE_HOST=db
     - DJANGO_SETTINGS_MODULE=core.settings.prod_docker
-    - VIRTUAL_HOST=animalipedia.com
+    - VIRTUAL_HOST=pycon.com
     - VIRTUAL_PORT=8080
     - EMAIL_HOST=smtp.csir.co.za
     - EMAIL_PORT=25
@@ -73,7 +73,7 @@ uwsgi:
 
 dbbackups:
   # Note you cannot scale if you use conteiner_name
-  container_name: animalipedia-db-backups
+  container_name: pycon-db-backups
   image: kartoza/pg-backup:9.4
   hostname: pg-backups
   volumes:
@@ -84,7 +84,7 @@ dbbackups:
   environment:
     # take care to let the project name below match that
     # declared in the top of the makefile
-    - DUMPPREFIX=PG_animalipedia
+    - DUMPPREFIX=PG_pycon
     # These are all defaults anyway, but setting explicitly in
     # case we ever want to ever use different credentials
     - PGUSER=docker
@@ -97,7 +97,7 @@ dbbackups:
 # This is normally the main entry point for a production server
 web:
   # Note you cannot scale if you use conteiner_name
-  container_name: animalipedia-web
+  container_name: pycon-web
   image: nginx
   hostname: nginx
   volumes:
@@ -117,7 +117,7 @@ web:
 # from produ environment if wanted
 devweb:
   # Note you cannot scale if you use conteiner_name
-  container_name: animalipedia-dev-web
+  container_name: pycon-dev-web
   build: docker
   dockerfile: Dockerfile-dev
   hostname: uwsgi
@@ -128,7 +128,7 @@ devweb:
     - DATABASE_HOST=db
     - DJANGO_SETTINGS_MODULE=core.settings.prod_docker
     - PYTHONPATH=/home/web/django_project
-    - VIRTUAL_HOST=animalipedia.com
+    - VIRTUAL_HOST=pycon.com
     - VIRTUAL_PORT=8080
   volumes:
     - ../django_project:/home/web/django_project
