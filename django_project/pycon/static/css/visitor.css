@@ -7,3 +7,22 @@
     height: 100%;
     width: 100%;
 }
+
+@media (min-width: 576px) {
+    .form-container {
+        padding: 1.5rem;
+        margin-right: 0;
+        margin-bottom: 0;
+        margin-left: 0;
+        border-width: .2rem;
+    }
+}
+
+#id_home_div_map, #id_home_map {
+    width: 100% !important;
+}
+
+#submit-id-submit {
+    margin-top: 20px;
+    width: 100%;
+}

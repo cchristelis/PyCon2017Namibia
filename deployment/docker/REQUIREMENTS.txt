@@ -7,3 +7,4 @@ django-timezone-field<1.4
 django-allauth
 factory_boy
 Pillow<3.4
+django-crispy-forms==1.6.1
