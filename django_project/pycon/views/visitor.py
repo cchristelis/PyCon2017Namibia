@@ -5,7 +5,7 @@ from django.views.generic import (
 )
 
 from pycon.models.visit import Visit
-from pycon.serializers.visitor import VisitorSerializer
+from pycon.serializers.visit_serializer import VisitSerializer
 
 
 __author__ = 'Dimas Ciputra <dimas@kartoza.com>'
@@ -26,7 +26,7 @@ class VisitorMapView(TemplateView):
         :rtype: dict
         """
         context = super(VisitorMapView, self).get_context_data(**kwargs)
-        serializer = VisitorSerializer(Visit.objects.all(), many=True)
+        serializer = VisitSerializer(Visit.objects.all(), many=True)
         visitor = json.dumps(serializer.data)
         context['visitors'] = visitor
         return context
