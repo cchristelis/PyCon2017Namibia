@@ -26,7 +26,7 @@ smtp:
   hostname: postfix
   environment:
     # You could change this to something more suitable
-    - maildomain=terranex.co.za
+    - maildomain=kartoza.com
     - smtp_user=noreply:docker
   restart: on-failure:5
 
@@ -49,7 +49,7 @@ uwsgi:
   build: docker
   hostname: uwsgi
   environment:
-    - DATABASE_NAME=gis
+    - DATABASE_NAME=pycon
     - DATABASE_USERNAME=docker
     - DATABASE_PASSWORD=docker
     - DATABASE_HOST=db
