@@ -2,13 +2,11 @@
 """Project level url handler."""
 from django.contrib import admin
 from django.conf.urls import url
+from pycon.api_views.visitors import VisitorsApi
+from pycon.views.visitor import VisitorCreate
 from pycon.views.visitor import VisitorMapView
 
 admin.autodiscover()
-from django.conf.urls import url
-from pycon.api_views.visitors import VisitorsApi
-from pycon.views.visitor import VisitorCreate
-
 urlapi = [
     url(
         r'api/conference/(?P<conference_id>\d+)/visitors$',
