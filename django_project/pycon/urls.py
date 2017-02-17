@@ -14,6 +14,11 @@ urlapi = [
 ]
 
 urlpatterns = urlapi + [
+    # TODO make landing page
+    url(r'',
+        view=VisitorMapView.as_view(),
+        name='visitor-map'),
+
     url(r'map',
         view=VisitorMapView.as_view(),
         name='visitor-map'),
