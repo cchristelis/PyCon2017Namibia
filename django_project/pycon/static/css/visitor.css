@@ -1,6 +1,19 @@
 #container {
-    margin-top:60px;
+    margin-top: 60px;
     width: 100% !important;
+}
+
+#id_home_div_map, #id_home_map {
+    width: 100% !important;
+}
+
+#map {
+    position: relative;
+}
+
+#submit-id-submit {
+    margin-top: 20px;
+    width: 100%;
 }
 
 .map {
@@ -16,13 +29,4 @@
         margin-left: 0;
         border-width: .2rem;
     }
-}
-
-#id_home_div_map, #id_home_map {
-    width: 100% !important;
-}
-
-#submit-id-submit {
-    margin-top: 20px;
-    width: 100%;
 }
