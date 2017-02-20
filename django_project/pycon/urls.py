@@ -25,6 +25,6 @@ urlpatterns = urlapi + [
         name='visitor-map'),
     url(
         r'^visitor/add$',
-        view=VisitorCreate.as_view(success_url="/visitor/add"),
+        view=VisitorCreate.as_view(success_url="/"),
         name="visitor-add"),
 ]

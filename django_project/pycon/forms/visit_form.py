@@ -26,7 +26,7 @@ class VisitForm(forms.ModelForm):
         self.helper = FormHelper()
         layout = Layout(
             Fieldset(
-                'Add Visitor',
+                'Add Delegate',
                 Field('name', css_class="form-control"),
                 Field('date_left', css_class="form-control", type="date"),
                 Field('conference', css_class="form-control"),

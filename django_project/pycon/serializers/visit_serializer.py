@@ -3,6 +3,7 @@ __date__ = '16/02/17'
 
 import hashlib
 from rest_framework import serializers
+#from rest_framework_gis.serializers import GeoFeatureModelSerializer, GeometrySerializerMethodField
 from pycon.models.visit import Visit
 
 
@@ -10,7 +11,7 @@ class VisitSerializer(serializers.ModelSerializer):
     name = serializers.SerializerMethodField('is_named_bar')
     gravatar_url = serializers.SerializerMethodField()
     conference_name = serializers.SerializerMethodField()
-    conference_coordinate = serializers.SerializerMethodField()
+    #geometry = GeometrySerializerMethodField()
 
     def is_named_bar(self, instance):
         return instance.__unicode__()
