@@ -1,0 +1,145 @@
+{% extends "project_base.html" %}
+{% load staticfiles %}
+{% block title %}
+    Add Visitor
+{% endblock title %}
+{% load crispy_forms_tags %}
+
+{% block css %}
+    <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/ol3/3.20.0/ol.css">
+    <link rel="stylesheet" href="//cdn.jsdelivr.net/openlayers.popup/1.0.1/ol3-popup.css">
+    <link href="//cdn.jsdelivr.net/openlayers.geocoder/latest/ol3-geocoder.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="{% static 'css/visitor.css' %}" type="text/css">
+{% endblock %}
+
+{% block js %}
+    <script src="//cdnjs.cloudflare.com/ajax/libs/ol3/3.20.0/ol.js"></script>
+    <script src="//cdn.jsdelivr.net/openlayers.popup/1.0.1/ol3-popup.js"></script>
+    <script src="//cdn.jsdelivr.net/openlayers.geocoder/latest/ol3-geocoder.js"></script>
+{% endblock js %}
+
+{% block content %}
+    <head>
+        {{ form.media }}
+    </head>
+    <div class="container">
+        <div class="form-container">
+            <form action="" method="post">
+                {% csrf_token %}
+                <div class="form-group">
+                    {% crispy form %}
+                </div>
+            </form>
+        </div>
+        <div id="visitor-map-container" >
+            Home
+{#            <input class="textinput" id="id_home" maxlength="200" name="home" type="text" required=""/>#}
+            <div id="visitor-map" class="visitor-map"></div>
+        </div>
+    </div>
+{% endblock %}
+
+{% block inline-js %}
+    <script type="text/javascript">
+        $(document).ready(function () {
+            $('#id_home_map').hide();
+            $('.clear_features').hide();
+            $('#div_id_home').hide();
+            $('#visitor-map-container').appendTo('#visitor-add-form');
+        });
+        var map = new ol.Map({
+            target: document.getElementById('visitor-map'),
+            layers: [
+                new ol.layer.Tile({
+                    source: new ol.source.OSM()
+                })
+            ],
+            view: new ol.View({
+                center: ol.proj.fromLonLat([18.490410, -22.957640]),
+                zoom: 6.5
+            })
+        });
+        var popup = new ol.Overlay.Popup({
+            panMapIfOutOfView: false
+        });
+        map.addOverlay(popup);
+
+        document.getElementById('id_date_left').type = 'date';
+        var geocoder = new Geocoder('nominatim', {
+            provider: 'mapquest',
+            key: 'wzjU16ALNwIAj1FDwwtxU8wTsGJbNfUS',
+            lang: 'en-US', //en-US, fr-FR
+            placeholder: 'Search for ...',
+            targetType: 'text-input',
+            limit: 5,
+            keepOpen: true
+        });
+        map.addControl(geocoder);
+        geocoder.on('addresschosen', function (evt) {
+            window.setTimeout(function () {
+                popup.show(evt.coordinate, evt.address.formatted);
+            }, 1000);
+        });
+
+        var drawSource = new ol.source.Vector({
+            wrapX: false
+        });
+        var drawLayer = new ol.layer.Vector({
+            source: drawSource,
+            style: new ol.style.Style({
+                fill: new ol.style.Fill({
+                    color: 'rgba(255, 255, 255, 0.2)'
+                }),
+                stroke: new ol.style.Stroke({
+                    color: '#ffcc33',
+                    width: 2
+                }),
+                image: new ol.style.Circle({
+                    radius: 7,
+                    fill: new ol.style.Fill({
+                        color: '#ffcc33'
+                    })
+                })
+            })
+        });
+        map.addLayer(drawLayer);
+        var lastFeature, draw, featureType;
+        var removeLastFeature = function () {
+            if (lastFeature) drawSource.removeFeature(lastFeature);
+        };
+        var addInteraction = function (geomtype) {
+            if (draw)
+                map.removeInteraction(draw);
+            draw = new ol.interaction.Draw({
+                source: drawSource,
+                type: geomtype
+            });
+
+            if (featureType === 'Point') {
+                draw.on('drawend', function (e) {
+                    removeLastFeature();
+                    lastFeature = e.feature;
+                });
+            } else {
+                draw.on('drawend',  function(e) {
+                    lastFeature = e.feature;
+                    var coordinates = lastFeature.getGeometry().getCoordinates();
+                    coordinates = ol.proj.transform(coordinates, 'EPSG:3857','EPSG:4326');
+                    $('#id_home').val('Point(' + coordinates[0] + ' ' + coordinates[1] + ')');
+                });
+                draw.on('drawstart', function (e) {
+                    drawSource.clear();
+                });
+            }
+            map.addInteraction(draw);
+        };
+        addInteraction('Point');
+
+        $('#gcd-input-query').keypress(function (e) {
+            if (e.which == 13) {
+                e.preventDefault();
+            }
+        });
+
+    </script>
+{% endblock %}
