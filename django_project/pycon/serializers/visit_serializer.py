@@ -10,6 +10,7 @@ class VisitSerializer(serializers.ModelSerializer):
     name = serializers.SerializerMethodField('is_named_bar')
     gravatar_url = serializers.SerializerMethodField()
     conference_name = serializers.SerializerMethodField()
+    conference_coordinate = serializers.SerializerMethodField()
 
     def is_named_bar(self, instance):
         return instance.__unicode__()
@@ -22,13 +23,18 @@ class VisitSerializer(serializers.ModelSerializer):
         email = 'default@default.com'
         if obj.gravatar:
             email = obj.gravatar
-        size = 40
 
         # construct the url
         gravatar_url = "https://www.gravatar.com/avatar/" + hashlib.md5(email.lower()).hexdigest()
-
         return gravatar_url
 
-    def get_conference_name(self,obj):
+    def get_conference_name(self, obj):
         conference = obj.conference
-        return "[%s]%s" % (conference.conference_name,conference.conference_code)
+        return "[%s] %s" % (conference.conference_name, conference.conference_code)
+
+    def get_conference_coordinate(self, obj):
+        conference = obj.conference
+        return {
+            'lat': conference.location.y,
+            'lon': conference.location.x
+        }
