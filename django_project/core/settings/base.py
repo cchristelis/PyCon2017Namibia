@@ -7,7 +7,8 @@ core.settings.project
 from .utils import absolute_path
 
 ADMINS = (
-    ('Muhammad Anis', 'anisiconic@gmail.com'),
+    ('Muhammad Anis', 'anis@kartoza.com'),
+    ('Christian Christelis', 'christian@kartoza.com'),
 )
 
 MANAGERS = ADMINS

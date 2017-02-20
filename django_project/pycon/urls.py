@@ -16,15 +16,15 @@ urlapi = [
 urlpatterns = urlapi + [
     # TODO make landing page
     url(
-        r'',
+        r'^$',
         view=VisitorMapView.as_view(),
         name='visitor-map'),
     url(
-        r'map',
+        r'^map$',
         view=VisitorMapView.as_view(),
         name='visitor-map'),
     url(
-        r'visitor/add',
-        VisitorCreate.as_view(success_url="/visitor/add"),
+        r'^visitor/add$',
+        view=VisitorCreate.as_view(success_url="/visitor/add"),
         name="visitor-add"),
 ]

@@ -11,6 +11,10 @@ from django.utils.translation import ugettext_lazy as _
 from .utils import absolute_path
 from .contrib import *  # noqa
 
+INSTALLED_APPS += (
+    'pycon',
+)
+
 # Due to profile page does not available,
 # this will redirect to home page after login
 LOGIN_REDIRECT_URL = '/'

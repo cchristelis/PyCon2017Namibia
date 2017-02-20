@@ -10,7 +10,8 @@ DEBUG = False
 ALLOWED_HOSTS = ['*']
 
 ADMINS = (
-    ('Muhammad Anis', 'anisiconic@gmail.com'),
+    ('Muhammad Anis', 'anis@kartoza.com'),
+    ('Christian Christelis', 'christian@kartoza.com'),
 )
 
 DATABASES = {
@@ -35,8 +36,6 @@ EMAIL_HOST = os.environ.get('EMAIL_HOST', 'smtp.csir.co.za')
 EMAIL_PORT = int(os.environ.get('EMAIL_PORT', 25))
 # SMTP authentication information for EMAIL_HOST.
 # See fig.yml for where these are defined
-#EMAIL_HOST_USER = 'user@do.ma.in'
-#EMAIL_HOST_PASSWORD = 'password'
 EMAIL_USE_TLS = False
-DEFAULT_FROM_EMAIL = os.environ.get('EMAIL_FROM', 'no-reply@csir.co.za')
-EMAIL_SUBJECT_PREFIX = '[Anis]'
+DEFAULT_FROM_EMAIL = os.environ.get('EMAIL_FROM', 'no-reply@kartoza.co.za')
+EMAIL_SUBJECT_PREFIX = '[PyCon]'
